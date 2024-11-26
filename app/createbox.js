@@ -35,7 +35,7 @@ export default function CreateBox() {
   };
 
   return (
-    <main className="bg-[#f5f8fa] h-screen flex flex-col items-center justify-center font-sans">
+    <main className="bg-[#f5f8fa] h-screen flex flex-col items-center justify-center font-sans p-4">
       {/* Button to toggle form visibility */}
       <button
         onClick={() => setIsFormVisible(!isFormVisible)}
@@ -46,7 +46,7 @@ export default function CreateBox() {
 
       {/* Form for submitting content, visible when isFormVisible is true */}
       {isFormVisible && (
-        <div className="bg-white p-6 rounded-lg w-3/4 sm:w-2/3 md:w-1/2 shadow-lg max-w-md">
+        <div className="p-6 rounded-lg w-full sm:w-2/3 md:w-1/2 max-w-md bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Post Something New</h2>
 
           {/* Form for submitting text and file */}
@@ -80,7 +80,7 @@ export default function CreateBox() {
 
       {/* Displaying submitted content */}
       {text && (
-        <div className="mt-8 p-6 rounded-lg text-gray-800 w-3/4 sm:w-2/3 md:w-1/2 shadow-lg max-w-md">
+        <div className="mt-8 p-6 rounded-lg text-gray-800 w-full sm:w-2/3 md:w-1/2 max-w-md bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg">
           <h3 className="text-xl font-semibold mb-4">Your Post</h3>
           <div>
             <p>{text}</p>
