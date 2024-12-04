@@ -4,41 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import "/app/globals.css";
 
-export default function CreatePostPage() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedCommunity, setSelectedCommunity] = useState("");
-  const [media, setMedia] = useState(null);
-
-  // States for toggling sections (initially open as in HomePage)
-  const [isRecentOpen, setIsRecentOpen] = useState(true);
+export default function AllPage() {
   const [isCommunitiesOpen, setIsCommunitiesOpen] = useState(true);
+  const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [isResourcesOpen, setIsResourcesOpen] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const newPost = {
-      title,
-      description,
-      community: selectedCommunity,
-      media,
-      id: Date.now(),
-    };
-
-    console.log("New Post Created:", newPost);
-
-    setTitle("");
-    setDescription("");
-    setSelectedCommunity("");
-    setMedia(null);
-  };
-
   const toggleSection = (section) => {
-    if (section === "recent") {
-      setIsRecentOpen(!isRecentOpen);
-    } else if (section === "communities") {
+    if (section === "communities") {
       setIsCommunitiesOpen(!isCommunitiesOpen);
+    } else if (section === "recent") {
+      setIsRecentOpen(!isRecentOpen);
     } else if (section === "resources") {
       setIsResourcesOpen(!isResourcesOpen);
     }
@@ -83,10 +58,11 @@ export default function CreatePostPage() {
         </div>
       </header>
 
+      
       {/* Main Layout */}
-      <div className="flex flex-grow pt-24">
+      <div className="flex flex-grow pt-24"> {/* Added padding-top to avoid overlap with fixed top bar */}
         {/* Sidebar Navigation */}
-        <aside className="w-[300px] bg-[#1A1A1A] p-8 flex flex-col space-y-8 shadow-lg border-r border-[#00FFAB] fixed top-24 left-0 h-[calc(100vh-6rem)] overflow-y-auto">
+        <aside className="w-1/5 bg-[#1A1A1A] p-8 flex flex-col space-y-8 shadow-lg border-r border-[#00FFAB] fixed top-24 left-0 h-[calc(100vh-6rem)] overflow-y-auto">
           <img
             src="/images/Screenshot%202024-11-26%20122532.png"
             alt="Datara Logo"
@@ -141,10 +117,10 @@ export default function CreatePostPage() {
               {isCommunitiesOpen && (
                 <ul className="space-y-2 mt-2">
                   <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
-                    d/YourCommunity1
+                    r/YourCommunity1
                   </li>
                   <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
-                    d/YourCommunity2
+                    r/YourCommunity2
                   </li>
                 </ul>
               )}
@@ -183,56 +159,28 @@ export default function CreatePostPage() {
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-8 space-y-8 bg-[#1B1B1B] ml-[300px] overflow-auto">
-          {/* Create Post Form */}
-          <h1 className="text-2xl font-bold text-[#00FFAB]">Create a New Post</h1>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="title" className="block text-lg font-medium">Post Title</label>
-              <input
-                type="text"
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-[#2D2D2D] text-white rounded focus:outline-none"
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-lg font-medium">Post Description</label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-[#2D2D2D] text-white rounded focus:outline-none"
-              />
-            </div>
-            <div>
-              <label htmlFor="community" className="block text-lg font-medium">Select Community</label>
-              <select
-                id="community"
-                value={selectedCommunity}
-                onChange={(e) => setSelectedCommunity(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-[#2D2D2D] text-white rounded focus:outline-none"
+        <div className="flex-1 p-8 space-y-8 bg-[#1B1B1B] ml-[20%] overflow-y-auto">
+          <h1 className="text-5xl font-bold mb-6 text-center text-[#00FFAB]">
+            All Communities
+          </h1>
+
+          {/* List of All Communities */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {["Community 1", "Community 2", "Community 3", "Community 4"].map((community) => (
+              <div
+                key={community}
+                className="bg-[#333333] p-6 rounded-2xl shadow-2xl hover:shadow-2xl transition duration-300 transform hover:scale-105"
               >
-                <option value="">Select a community</option>
-                <option value="community1">Community 1</option>
-                <option value="community2">Community 2</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="media" className="block text-lg font-medium">Attach Media (Optional)</label>
-              <input
-                type="file"
-                id="media"
-                onChange={(e) => setMedia(e.target.files[0])}
-                className="w-full px-4 py-3 bg-[#2D2D2D] text-white rounded focus:outline-none"
-              />
-            </div>
-            <button type="submit" className="bg-[#00FFAB] text-black px-6 py-2 rounded-full w-full mt-4">Submit Post</button>
-          </form>
+                <h2 className="text-xl font-bold text-[#00FFAB]">{community}</h2>
+                <p className="text-[#D1D1D1] mt-2">
+                  Join and explore discussions in {community}.
+                </p>
+                <button className="mt-4 bg-[#00FFAB] px-4 py-2 rounded text-black hover:bg-[#00CC8B] transition duration-300">
+                  Join
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>

@@ -1,115 +1,207 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import "/app/globals.css";
 
-export default function Page() {
-  // State for likes and comments
-  const [likes, setLikes] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
-  const [comments, setComments] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
+export default function PopularPage() {
+  const [isCommunitiesOpen, setIsCommunitiesOpen] = useState(true);
+  const [isRecentOpen, setIsRecentOpen] = useState(true);
+  const [isResourcesOpen, setIsResourcesOpen] = useState(true);
 
-  // Handle like and comment button click
-  const handleLike = (postId) => {
-    setLikes((prev) => ({
-      ...prev,
-      [postId]: prev[postId] + 1,
-    }));
+  // State for tracking joined posts
+  const [joinedPosts, setJoinedPosts] = useState({});
+
+  const toggleSection = (section) => {
+    if (section === "communities") {
+      setIsCommunitiesOpen(!isCommunitiesOpen);
+    } else if (section === "recent") {
+      setIsRecentOpen(!isRecentOpen);
+    } else if (section === "resources") {
+      setIsResourcesOpen(!isResourcesOpen);
+    }
   };
 
-  const handleComment = (postId) => {
-    setComments((prev) => ({
+  const toggleJoin = (postId) => {
+    setJoinedPosts((prev) => ({
       ...prev,
-      [postId]: prev[postId] + 1,
+      [postId]: !prev[postId], // Toggles the join state for the specific post
     }));
   };
 
   return (
-    <div className="flex min-h-screen bg-[#181818]">
-      {/* Sidebar */}
-      <div className="w-1/5 bg-[#202020] text-white p-4">
-        <div className="flex flex-col space-y-6">
-          <Link href="/" className="text-xl font-bold">Home</Link>
-          <Link href="/" className="text-xl">Trending</Link>
-          <Link href="/" className="text-xl">Subscriptions</Link>
-          <Link href="/" className="text-xl">Library</Link>
-          <Link href="/" className="text-xl">History</Link>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 bg-[#121212] p-6">
-        {/* Top Bar */}
-        <header className="flex items-center justify-between bg-[#181818] p-4 shadow-md">
-          {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              <img
-                className="object-scale-down h-10 w-10 rounded-lg cursor-pointer"
-                src="/images/Screenshot%202024-11-26%20122532.png"
-                alt="Datara Logo"
-              />
-            </a>
-          </div>
-
-          {/* Search Bar */}
-          <div className="flex-1 mx-4">
-            <input
-              type="text"
-              placeholder="Search Datara..."
-              className="w-full px-4 py-2 bg-[#333333] text-white rounded-full focus:outline-none placeholder-gray-500"
+    <main className="bg-[#121212] text-[#D1D1D1] min-h-screen font-sans">
+      {/* Fixed Top Bar */}
+      <header className="flex items-center justify-between bg-[#0D0D0D] p-6 shadow-2xl border-b-2 border-[#00FFAB] fixed w-full top-0 z-10">
+        <div className="flex items-center space-x-6">
+          <a href="/" target="_blank" rel="noopener noreferrer">
+            <img
+              className="object-scale-down h-14 w-14 rounded-lg cursor-pointer transform hover:scale-110 transition duration-300"
+              src="/images/Screenshot%202024-11-26%20122532.png"
+              alt="Datara Logo"
             />
+          </a>
+        </div>
+
+        <div className="flex-1 mx-6">
+          <input
+            type="text"
+            placeholder="Search the future..."
+            className="w-full px-6 py-3 bg-[#1B1B1B] text-white rounded-full focus:outline-none placeholder-gray-500 transition-all duration-300 transform hover:scale-105"
+          />
+        </div>
+
+        <div className="flex items-center space-x-6">
+          <button className="text-white hover:text-[#00FFAB] transition duration-200">Chat</button>
+          <button className="text-white hover:text-[#00FFAB] transition duration-200">Notifications</button>
+          <Link href="/profile">
+            <button className="text-white hover:text-[#00FFAB] transition duration-200">Profile</button>
+          </Link>
+          <Link href="/signin">
+            <button className="text-white hover:text-[#00FFAB] transition duration-200">Sign In</button>
+          </Link>
+          <Link href="/createpost">
+            <button className="bg-[#00FFAB] text-black px-6 py-2 rounded-full hover:bg-[#00CC8B] transition duration-300 transform hover:scale-110">
+              Create Post
+            </button>
+          </Link>
+        </div>
+      </header>
+
+
+      {/* Main Layout */}
+      <div className="flex flex-grow pt-24">
+        {/* Sidebar Navigation */}
+        <aside className="w-1/5 bg-[#1A1A1A] p-8 flex flex-col space-y-8 shadow-lg border-r border-[#00FFAB] fixed top-24 left-0 h-[calc(100vh-6rem)] overflow-y-auto">
+          <img
+            src="/images/Screenshot%202024-11-26%20122532.png"
+            alt="Datara Logo"
+            className="h-32 w-32 object-scale-down rounded-full mx-auto border-4 border-[#00FFAB] transform hover:rotate-180 transition duration-500"
+          />
+          <nav className="space-y-6">
+            {["homepage", "Popular", "Explore", "All"].map((tab) => (
+              <Link
+                key={tab}
+                href={`/${tab}`}
+                className="block px-6 py-3 rounded-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#00FFAB] hover:text-black"
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="space-y-6">
+            {/* RECENT Section */}
+            <div>
+              <div
+                className="flex justify-between items-center cursor-pointer group"
+                onClick={() => toggleSection("recent")}
+              >
+                <h3 className="text-lg font-bold group-hover:text-[#00FFAB]">RECENT</h3>
+                <span className="text-[#00FFAB]">{isRecentOpen ? "↑" : "↓"}</span>
+              </div>
+              {isRecentOpen && (
+                <ul className="space-y-2 mt-2">
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    Recent Community 1
+                  </li>
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    Recent Community 2
+                  </li>
+                </ul>
+              )}
+            </div>
+
+            {/* Divider */}
+            <hr className="my-4 border-[#00FFAB]" />
+
+            {/* COMMUNITIES Section */}
+            <div>
+              <div
+                className="flex justify-between items-center cursor-pointer group"
+                onClick={() => toggleSection("communities")}
+              >
+                <h3 className="text-lg font-bold group-hover:text-[#00FFAB]">COMMUNITIES</h3>
+                <span className="text-[#00FFAB]">{isCommunitiesOpen ? "↑" : "↓"}</span>
+              </div>
+              {isCommunitiesOpen && (
+                <ul className="space-y-2 mt-2">
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    d/YourCommunity1
+                  </li>
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    d/YourCommunity2
+                  </li>
+                </ul>
+              )}
+            </div>
+
+            {/* Divider */}
+            <hr className="my-4 border-[#00FFAB]" />
+
+            {/* RESOURCES Section */}
+            <div>
+              <div
+                className="flex justify-between items-center cursor-pointer group"
+                onClick={() => toggleSection("resources")}
+              >
+                <h3 className="text-lg font-bold group-hover:text-[#00FFAB]">RESOURCES</h3>
+                <span className="text-[#00FFAB]">{isResourcesOpen ? "↑" : "↓"}</span>
+              </div>
+              {isResourcesOpen && (
+                <ul className="space-y-2 mt-2">
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    About Datara
+                  </li>
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    Content Policy
+                  </li>
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    Privacy Policy
+                  </li>
+                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                    User Agreement
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
+        </aside>
 
-          {/* Navigation Options */}
-          <div className="flex items-center space-x-6">
-            <button className="text-white">Notifications</button>
-            <button className="text-white">Profile</button>
-            {/* Create Post button */}
-            <Link href="/create">
-              <button className="bg-[#1E88E5] text-white px-6 py-2 rounded-full hover:bg-[#1976D2] transition duration-200">
-                Create Post
-              </button>
-            </Link>
-          </div>
-        </header>
+        {/* Main Content Area */}
+        <div className="flex-1 p-8 space-y-8 bg-[#1B1B1B] ml-[20%] overflow-y-auto">
+          <h1 className="text-5xl font-bold mb-6 text-center text-[#00FFAB]">
+            Popular Posts
+          </h1>
 
-        {/* Main Content */}
-        <main className="flex flex-grow flex-col p-4 space-y-8">
-          <h1 className="text-4xl font-bold text-center text-white">Popular Posts</h1>
-
-          {/* Grid of Popular Posts */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5].map((post) => (
+          {/* List of Popular Posts */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {["Post 1", "Post 2", "Post 3", "Post 4"].map((post) => (
               <div
                 key={post}
-                className="bg-[#2C2C2C] p-4 rounded-lg shadow-xl hover:shadow-2xl transition duration-300"
+                className="bg-[#333333] p-6 rounded-2xl shadow-2xl hover:shadow-2xl transition duration-300 transform hover:scale-105"
               >
-                <img
-                  src={`/images/post-image-${post}.jpg`} // Use appropriate image filenames for each post
-                  alt={`Post ${post}`}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
-                <h2 className="text-xl font-semibold text-white">Post Title {post}</h2>
-                <p className="text-gray-400 mt-4">A short description of the post goes here. It's a popular topic that's trending right now.</p>
-                <div className="flex space-x-4 mt-4">
+                <h2 className="text-xl font-bold text-[#00FFAB]">{post}</h2>
+                <p className="text-[#D1D1D1] mt-2">
+                  A snippet or preview of {post} content.
+                </p>
+                <div className="flex space-x-6 mt-4 items-center">
                   <button
-                    className="bg-[#1E88E5] text-white px-4 py-2 rounded-full hover:bg-[#1976D2] transition duration-200 transform hover:scale-105"
-                    onClick={() => handleLike(post)}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-110 ${
+                      joinedPosts[post]
+                        ? "bg-[#00FFAB] text-black"
+                        : "bg-[#1A1A1A] text-[#D1D1D1] hover:bg-[#00FFAB] hover:text-black"
+                    }`}
+                    onClick={() => toggleJoin(post)}
                   >
-                    Like {likes[post] > 0 && `(${likes[post]})`}
-                  </button>
-                  <button
-                    className="bg-[#1E88E5] text-white px-4 py-2 rounded-full hover:bg-[#1976D2] transition duration-200 transform hover:scale-105"
-                    onClick={() => handleComment(post)}
-                  >
-                    Comment {comments[post] > 0 && `(${comments[post]})`}
+                    {joinedPosts[post] ? "✔ Joined" : "Join"}
                   </button>
                 </div>
               </div>
             ))}
-          </section>
-        </main>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

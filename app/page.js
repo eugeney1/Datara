@@ -36,12 +36,13 @@ export default function SignInPage() {
                 Sign In
               </button>
             </Link>
+            <Link href={"/homepage"}>
             <button
-              onClick={handleGuest} // Calls the handleGuest function for redirection
               className="bg-[#333333] text-white px-6 py-2 rounded-full hover:bg-[#555555] transition duration-300"
             >
               Continue as Guest
             </button>
+            </Link>
           </div>
         </div>
       </div>
