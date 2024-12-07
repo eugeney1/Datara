@@ -44,6 +44,10 @@ export default function AllPage() {
         <div className="flex items-center space-x-6">
           <button className="text-white hover:text-[#00FFAB] transition duration-200">Chat</button>
           <button className="text-white hover:text-[#00FFAB] transition duration-200">Notifications</button>
+          <button className="text-white hover:text-[#00FFAB] transition duration-200">
+            <i className="fas fa-plug"></i> {/* Font Awesome Plug Icon representing API */}
+            API
+          </button>
           <Link href="/profile">
             <button className="text-white hover:text-[#00FFAB] transition duration-200">Profile</button>
           </Link>
@@ -58,7 +62,6 @@ export default function AllPage() {
         </div>
       </header>
 
-      
       {/* Main Layout */}
       <div className="flex flex-grow pt-24"> {/* Added padding-top to avoid overlap with fixed top bar */}
         {/* Sidebar Navigation */}
