@@ -9,6 +9,8 @@ export default function AllPage() {
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [isResourcesOpen, setIsResourcesOpen] = useState(true);
 
+  const [joinedCommunities, setJoinedCommunities] = useState(new Set()); // Track joined communities using a Set
+
   const toggleSection = (section) => {
     if (section === "communities") {
       setIsCommunitiesOpen(!isCommunitiesOpen);
@@ -19,9 +21,24 @@ export default function AllPage() {
     }
   };
 
+  const handleJoinCommunity = (community) => {
+    setJoinedCommunities((prev) => {
+      const updated = new Set(prev);
+      if (updated.has(community)) {
+        updated.delete(community); // If already a member, leave the community
+      } else {
+        updated.add(community); // Otherwise, join the community
+      }
+      return updated;
+    });
+  };
+
+  const isUserJoinedCommunity = (community) => {
+    return joinedCommunities.has(community); // Check if user is a member of this community
+  };
+
   return (
     <main className="bg-[#121212] text-[#D1D1D1] min-h-screen font-sans">
-      {/* Fixed Top Bar */}
       <header className="flex items-center justify-between bg-[#0D0D0D] p-6 shadow-2xl border-b-2 border-[#00FFAB] fixed w-full top-0 z-10">
         <div className="flex items-center space-x-6">
           <a href="/" target="_blank" rel="noopener noreferrer">
@@ -42,28 +59,30 @@ export default function AllPage() {
         </div>
 
         <div className="flex items-center space-x-6">
-          <button className="text-white hover:text-[#00FFAB] transition duration-200">Chat</button>
-          <button className="text-white hover:text-[#00FFAB] transition duration-200">Notifications</button>
           <button className="text-white hover:text-[#00FFAB] transition duration-200">
-            <i className="fas fa-plug"></i> {/* Font Awesome Plug Icon representing API */}
-            API
+            <i className="fas fa-comments"></i> Chat
           </button>
-          <Link href="/profile">
-            <button className="text-white hover:text-[#00FFAB] transition duration-200">Profile</button>
-          </Link>
+          <button className="text-white hover:text-[#00FFAB] transition duration-200">
+            <i className="fas fa-bell"></i> Notifications
+          </button>
+
+          {/* Conditionally show Profile or Sign In button */}
           <Link href="/signin">
-            <button className="text-white hover:text-[#00FFAB] transition duration-200">Sign In</button>
+            <button className="text-white hover:text-[#00FFAB] transition duration-200">
+              <i className="fas fa-sign-in-alt"></i> Sign In
+            </button>
           </Link>
+
           <Link href="/createpost">
             <button className="bg-[#00FFAB] text-black px-6 py-2 rounded-full hover:bg-[#00CC8B] transition duration-300 transform hover:scale-110">
-              Create Post
+              <i className="fas fa-plus"></i> Create Post
             </button>
           </Link>
         </div>
       </header>
 
       {/* Main Layout */}
-      <div className="flex flex-grow pt-24"> {/* Added padding-top to avoid overlap with fixed top bar */}
+      <div className="flex flex-grow pt-24">
         {/* Sidebar Navigation */}
         <aside className="w-1/5 bg-[#1A1A1A] p-8 flex flex-col space-y-8 shadow-lg border-r border-[#00FFAB] fixed top-24 left-0 h-[calc(100vh-6rem)] overflow-y-auto">
           <img
@@ -105,7 +124,6 @@ export default function AllPage() {
               )}
             </div>
 
-            {/* Divider */}
             <hr className="my-4 border-[#00FFAB]" />
 
             {/* COMMUNITIES Section */}
@@ -119,17 +137,25 @@ export default function AllPage() {
               </div>
               {isCommunitiesOpen && (
                 <ul className="space-y-2 mt-2">
-                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
-                    r/YourCommunity1
-                  </li>
-                  <li className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
-                    r/YourCommunity2
-                  </li>
+                  {["r/YourCommunity1", "r/YourCommunity2", "r/YourCommunity3"].map((community) => (
+                    <li key={community} className="p-2 bg-[#1A1A1A] rounded group hover:bg-[#00FFAB] hover:text-black transition-all duration-300 cursor-pointer">
+                      <div className="flex justify-between items-center">
+                        <span>{community}</span>
+                        <button
+                          className={`px-4 py-2 rounded text-black ${
+                            isUserJoinedCommunity(community) ? "bg-[#FF4B4B]" : "bg-[#00FFAB]"
+                          } hover:bg-[#00CC8B] transition duration-300`}
+                          onClick={() => handleJoinCommunity(community)}
+                        >
+                          {isUserJoinedCommunity(community) ? "Leave" : "Join"}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               )}
             </div>
 
-            {/* Divider */}
             <hr className="my-4 border-[#00FFAB]" />
 
             {/* RESOURCES Section */}
@@ -178,8 +204,13 @@ export default function AllPage() {
                 <p className="text-[#D1D1D1] mt-2">
                   Join and explore discussions in {community}.
                 </p>
-                <button className="mt-4 bg-[#00FFAB] px-4 py-2 rounded text-black hover:bg-[#00CC8B] transition duration-300">
-                  Join
+                <button
+                  className={`mt-4 px-4 py-2 rounded text-black ${
+                    isUserJoinedCommunity(community) ? "bg-[#FF4B4B]" : "bg-[#00FFAB]"
+                  } hover:bg-[#00CC8B] transition duration-300`}
+                  onClick={() => handleJoinCommunity(community)}
+                >
+                  {isUserJoinedCommunity(community) ? "Leave" : "Join"}
                 </button>
               </div>
             ))}
